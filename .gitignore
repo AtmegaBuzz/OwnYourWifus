@@ -24,3 +24,9 @@ dist-ssr
 *.sw?
 
 
+
+out
+out.r1cs
+proving.key
+verification.key
+
