@@ -22,29 +22,6 @@ function hashString(inputString,hashLength) {
   return hash.digest('hex').slice(0,hashLength);
 }
 
-function hexToBigNumber(hexString) {
-  const hex = hexString.startsWith('0x') ? hexString.slice(2) : hexString;
-  return BigInt(`0x${hex}`).toString();
-}
-
-// Function to compute SHA-256 hash in ZoKrates-compatible packed format
-function sha256packed(data) {
-  // Convert each hex string to a BigNumber
-  const bigNumbers = data.map(hexToBigNumber);
-
-  // Join all BigNumber strings into a single buffer
-  const packedBuffer = Buffer.concat(bigNumbers.map(num => Buffer.from(num, 'hex')));
-
-  // Compute SHA-256 hash
-  const hash = crypto.createHash('sha256').update(packedBuffer).digest('hex');
-
-  // Split the resulting hash into two parts of 128-bit each
-  const hashPart1 = hash.slice(0, 32); // First 128 bits
-  const hashPart2 = hash.slice(32, 64); // Second 128 bits
-
-  return [hashPart1, hashPart2];
-}
-
 function stringToHex(str) {
   let hex = '';
   for (let i = 0; i < str.length; i++) {
@@ -84,42 +61,24 @@ app.post('/api/generate-proof', (req, res) => {
 
   // const { name, age } = req.body;
 
-  // let aigc_data_hash =  
-
-  const data = [owner,prompt,uri,0]
-  console.log(sha256packed(data))
-  console.log([
-    owner,
+  const out = zk?.computeWitness(artifacts, [
+    owner, 
     prompt,
     uri,
     token_id,
     model_id,
-    model_addr
-  ])
-  // const out = zk?.computeWitness(artifacts, [
-  //   owner, 
-  //   prompt,
-  //   uri,
-  //   uri,
-  //   uri,
-  //   token_id,
-  //   model_id,
-  //   model_addr,
-  //   model_addr,
-  //   model_addr
-  // ]);
+    model_addr,
+  ]);
 
 
-  // const proof = zk?.generateProof(
-  //   artifacts.program,
-  //   out.witness,
-  //   proving_key
-  // )
+  const proof = zk?.generateProof(
+    artifacts.program,
+    out.witness,
+    proving_key
+  )
 
 
-  // console.log(proof);
-
-
+  console.log(proof);
 
 
   res.json({ message: 'Data received successfully!' });
@@ -130,14 +89,11 @@ app.listen(port, async () => {
   zk = await initialize()
 
   // get source file
-  let source = fs.readFileSync("src/main.zok")
+  let source = fs.readFileSync("../circuit/main.zok")
 
-  // artifacts = zk.compile(source.toString(), {debug: true});
+  artifacts = zk.compile(source.toString(), {debug: true});
 
-  // proving_key = base64ToUint8Array(fs.readFileSync("src/proving.key").toString('base64'));
+  proving_key = base64ToUint8Array(fs.readFileSync("../circuit/proving.key").toString('base64'));
   console.log(`Server is running on http://localhost:${port}`);
 
 });
-
-
-// x is ["223327664358836963372700768644666021985","237222010210539088169657622460833873792"], y is ["339647579740628927478439536697560176125","67587774717118373856673073548473668498"]
