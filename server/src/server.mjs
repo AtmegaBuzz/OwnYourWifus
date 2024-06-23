@@ -3,8 +3,7 @@ import bodyParser from 'body-parser';
 import { initialize } from "zokrates-js";
 import * as fs from "fs";
 import * as crypto from "crypto";
-import { useInsertionEffect } from 'react';
-import { url } from 'inspector';
+import cors from "cors";
 
 function base64ToUint8Array(base64String) {
   const binaryString = atob(base64String);
@@ -41,16 +40,7 @@ let verifier_key = null;
 const encoder = new TextEncoder();
 
 
-
-const owner = stringToHex(hashString("0x375C11FD30FdC95e10aAD66bdcE590E1bccc6aFA", 16));
-const prompt = stringToHex(hashString("a green cow", 16));
-const uri = stringToHex(hashString("ipfs://qwieqweoqweiqweeqwe", 16))
-const token_id = "1"
-const model_id = "50"
-const model_addr = stringToHex(hashString("0x375C11FD30FdC95e10aAD66bdcE590E1bccc6aFA", 16))
-
-
-
+app.use(cors())
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
@@ -59,7 +49,15 @@ app.get('/', (req, res) => {
 
 app.post('/api/generate-proof', (req, res) => {
 
-  // const { name, age } = req.body;
+  console.log(req.body)
+  const owner = stringToHex(hashString(req.body.owner, 16));
+  const prompt = stringToHex(hashString(req.body.prompt, 16));
+  const uri = stringToHex(hashString(req.body.uri, 16))
+  const token_id = req.body.token_id
+  const model_id = req.body.model_id
+  const model_addr = stringToHex(hashString(req.body.model_addr, 16))
+
+
 
   const out = zk?.computeWitness(artifacts, [
     owner, 
@@ -81,7 +79,7 @@ app.post('/api/generate-proof', (req, res) => {
   console.log(proof);
 
 
-  res.json({ message: 'Data received successfully!' });
+  res.json(proof);
 });
 
 app.listen(port, async () => {

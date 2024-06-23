@@ -158,19 +158,17 @@ contract Verifier {
         Pairing.G1Point c;
     }
     function verifyingKey() pure internal returns (VerifyingKey memory vk) {
-        vk.alpha = Pairing.G1Point(uint256(0x16d5b2aa517daffee3b02fb4f86096d15147a53f48b59e4e8d414e0993e0ea73), uint256(0x019e7557bfad6acfc1d870591be92552e3098aba7bd6ded00f86aa6e864a1806));
-        vk.beta = Pairing.G2Point([uint256(0x058f22dbd8bdcf038686a8cf016edd32a93c79c7d43711a8ef5c0f0c8ada63dc), uint256(0x265fa829c33b5571c98381adf091aebcbffa0a91bcbd2ee131cc983b4a727e37)], [uint256(0x217c2cfc7f38756c2c6dc3552447eacc23bd4b174231d8e11d9dc7d9f2633aa5), uint256(0x07df48453b9893c83c00089e81bc507d16bd9c874e72a61a402a8a18525b9dcd)]);
-        vk.gamma = Pairing.G2Point([uint256(0x0f2b210faf081d5fca8ce625ce95c5949415f6599ec39a0eb34781014256ee83), uint256(0x14a5176169519cc84eca63d68370e4b16d2eade30b830fb6ab1167680969104f)], [uint256(0x07a41ee8c54d01333a4004023369d9941132b2e89bdceec4c06e7c6f369a20fd), uint256(0x103325ff003ebf5ca6993fec6b1af6e329f1702babd01c5b4dfc344aa2b8c72b)]);
-        vk.delta = Pairing.G2Point([uint256(0x04efd62df47f415c319b741ddac0a32718e2dc611d73343c46a4c300a0400fb0), uint256(0x10880634a4c39e4e29b15bee9e7b1c6ceb7a671d45115e7d4f53fdd331a6b054)], [uint256(0x19456cea4906294dd9878119041fe2917f97a5ac8f6a8e265c502e78eae735bc), uint256(0x0d8bd46f378e8146978416a0da99468592117f43d655dd435fab57ed5571ecc7)]);
-        vk.gamma_abc = new Pairing.G1Point[](8);
-        vk.gamma_abc[0] = Pairing.G1Point(uint256(0x0d9298e84311b2505b340812154d58f5f08a482fc8fcbad1441a69434eefb71f), uint256(0x1a800ecf3ad2e90798f39612877b09f517991e899a56f63a50e369cb47616600));
-        vk.gamma_abc[1] = Pairing.G1Point(uint256(0x20e182d205a1ea97134890ad31d63dbd9ebee466968cb42b112cea2180b236be), uint256(0x305619d1e7fa4bbe40ba094e964df9cb55734e265ff32314ce48426709138969));
-        vk.gamma_abc[2] = Pairing.G1Point(uint256(0x2ba9f7fb41d6f45817baae2b63844fa56475f5e8ea2613631ee2cd27229a200d), uint256(0x279d764a023f5b8aa61afb9826f7cd009c58ea6fb44a4e39c187ad20361b6eb1));
-        vk.gamma_abc[3] = Pairing.G1Point(uint256(0x151060c625e97138d76e590d5233d2146250ba50b5a590a1708753903a118c2f), uint256(0x07080d4152814ee90d890ef06167f244029fdcd473b883794277ac079ccd19c7));
-        vk.gamma_abc[4] = Pairing.G1Point(uint256(0x12939ef93e069a856fad7dab609853a585c8236baca020d8a7e461d4ca786fb0), uint256(0x1c657f4d47aa7153f2d322d7a847a8cf1251f33bc0860edbe10d7e8889b457ed));
-        vk.gamma_abc[5] = Pairing.G1Point(uint256(0x2322f497ba08be765afb73b6f36dd30248666ca3469658fc0b61b2347816239d), uint256(0x2c7025e65bb1d14eb315dcd550fbaa6da748a8bdcf46b17bf1a4319f51f9857d));
-        vk.gamma_abc[6] = Pairing.G1Point(uint256(0x09aed8dc0f4e10f6b56d812c4df399c5e8422339f759b707f5995cf2e9081b55), uint256(0x0ef67837f4c16fce2ada005ed3df20ff0a06f0725649e41cf53c1a72cc5092d8));
-        vk.gamma_abc[7] = Pairing.G1Point(uint256(0x02f8adbf8f1eeeb2e9a54061194ffbb2f77658cc65f18a50f27d2536ae4dfd78), uint256(0x2fb3ed6cd39e16aeee3dfdfdb64f8ec92258977e7f8d29320a74fd8a288d233a));
+        vk.alpha = Pairing.G1Point(uint256(0x02e4e342e09cc38aea0f5718187109ee6a693e1692746240d8067b196c9ab885), uint256(0x03c638f67c45fb557ff3f71cc8dcf72453f99c0d4a2798d493b74abe18338639));
+        vk.beta = Pairing.G2Point([uint256(0x2ba2f1e535ae7e51b492963def6fa6c4738a45225ff6da59f9ca3555d5597ab6), uint256(0x14417ad1e990c4c9e7409cd36c6e407d8bb6c8a2f68874c94a36b4e8ac633b31)], [uint256(0x19928a8904f87693d2d2bd365716ea0c91dbeaa0372af2f81fb70fe83e49a4e5), uint256(0x11f564070e89eba8be4ad6d33b4d552e7bc8bf037844b9e8c7af2b7ecedccca2)]);
+        vk.gamma = Pairing.G2Point([uint256(0x0d804e6d1f1762cb46759150697eb53e52a834955768a4d45b68e05c90587c5f), uint256(0x0dc13c8c5866f242f0b7a647efcc1c5f6d879eae30506c5ad0eecd626d23aad3)], [uint256(0x08c66f6f5f3c534b3e1a9d8ce2ecd4487ff95326411961f1e6452ebd0b7c791a), uint256(0x00cde05a84f2e5d78e1842f70e7b0cb96ef779095a45868334e2464e96cb3f26)]);
+        vk.delta = Pairing.G2Point([uint256(0x2a16f67937b4b8e82faaa42288bac1efc6bc0add48c3e7c5fae8464f67bbe090), uint256(0x24b37c5a0a88be3189e6a10511d055059da535814b410845f844c29d14fb353a)], [uint256(0x2953406a63ac0b96f4f4b84abb6bd47b8a132631731e1c70e778b4baac67f086), uint256(0x03f07238dcf2398796b73e92b6898bb99d13b5619881e78b719bfd74ed2556c2)]);
+        vk.gamma_abc = new Pairing.G1Point[](6);
+        vk.gamma_abc[0] = Pairing.G1Point(uint256(0x2452a2328a0fca42ecb2a6f6d9b61576a910388349addc48198edf54ebad7a33), uint256(0x2454cb7daa4e6c00799d8117accb5039dfcacdffd4191d61eb4cc2ff410f4e3a));
+        vk.gamma_abc[1] = Pairing.G1Point(uint256(0x2679b135d62055ab41a37c90c4155ffc349954780ab5e947f8e235c08917980c), uint256(0x23ef3a05c85d47d61c90386632c108cab613fc6dfe7faca9abdcda9e4ec32ffc));
+        vk.gamma_abc[2] = Pairing.G1Point(uint256(0x14e5b612c827c82c99359c2d63c44cf11d3e9a0b25f142e2f3aba355c7766313), uint256(0x0e51f3aaf7b63c9da98c6281493de75c57cccfcdf251cbb6256450a0c2bdf4e8));
+        vk.gamma_abc[3] = Pairing.G1Point(uint256(0x2b10a4c3361b605103ce234ddc8b761b07276d7d053c7446aeb7495375482273), uint256(0x0924baec305060d2e5db5a75b55a37fbebe726e921f0cc2f8a1ed9494aba8808));
+        vk.gamma_abc[4] = Pairing.G1Point(uint256(0x261ef28886d60c9824fb9a91bc881f585016c5c79d3ff8acab386f4217e08746), uint256(0x1ad4a1db1d3bd52391b730ce54667c51f1f11d84236025fc801c63dd099a7c56));
+        vk.gamma_abc[5] = Pairing.G1Point(uint256(0x086d3244f4ed19477811a7551700271c448723e042ca1a57868baf2c92b3c9a7), uint256(0x28b602b08762b6ae16bb5ae35c421a1f8d19b0331d71e1bb1fa22c866d46f8b7));
     }
     function verify(uint[] memory input, Proof memory proof) internal view returns (uint) {
         uint256 snark_scalar_field = 21888242871839275222246405745257275088548364400416034343698204186575808495617;
@@ -191,9 +189,9 @@ contract Verifier {
         return 0;
     }
     function verifyTx(
-            Proof memory proof, uint[7] memory input
+            Proof memory proof, uint[5] memory input
         ) public view returns (bool r) {
-        uint[] memory inputValues = new uint[](7);
+        uint[] memory inputValues = new uint[](5);
         
         for(uint i = 0; i < input.length; i++){
             inputValues[i] = input[i];

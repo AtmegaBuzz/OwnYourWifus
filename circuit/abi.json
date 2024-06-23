@@ -16,16 +16,6 @@
       "type": "field"
     },
     {
-      "name": "aigc_data_hash0",
-      "public": true,
-      "type": "field"
-    },
-    {
-      "name": "aigc_data_hash1",
-      "public": true,
-      "type": "field"
-    },
-    {
       "name": "token_id",
       "public": false,
       "type": "field"
@@ -37,16 +27,6 @@
     },
     {
       "name": "model_addr",
-      "public": false,
-      "type": "field"
-    },
-    {
-      "name": "model_data_hash0",
-      "public": false,
-      "type": "field"
-    },
-    {
-      "name": "model_data_hash1",
       "public": false,
       "type": "field"
     }
