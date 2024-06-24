@@ -20,8 +20,8 @@ const sleep = (ms: number) => {
 
 const createNFT = () => {
 
-  const [query, setQuery] = useState("a black man");
-  const [wifu, setWifu] = useState("Qme9PptWmw9c4uuerPn2gBRaR7uHow97i5Xg1d47Vp5WHn");
+  const [query, setQuery] = useState("Imagine a striking anime character exuding confidence and elegance. She possesses a thick, curvaceous figure with generous proportions, notably big breasts and a curvy abdomen. She is adorned in a sleek black gown that accentuates her silhouette, with intricate details that highlight her style and sophistication. Her pose exudes charisma, perhaps with one hand on her hip and a slight tilt of the head, showcasing her confidence and allure. The illustration should capture her gracefulness and charm, making her a captivating presence in any scene.");
+  const [wifu, setWifu] = useState("");
   const [state, setState] = useState("start"); // start zkp mint
   const [proof, setProof] = useState<any>(null);
 
@@ -188,14 +188,13 @@ const createNFT = () => {
       const estimated_fees = await contract?.methods.estimateFee(MODEL_ID).call({ from: accounts[0] })
       const gasPrice = await web3?.eth.getGasPrice();
 
-      setLoadingMsg("Checking NFT creation");
-
-
       contract?.methods.calculateAIResult(MODEL_ID, `*${query}*`).send({
         from: accounts[0],
         value: estimated_fees?.toString(),
         gasPrice: gasPrice?.toString()
       }).on('confirmation', async function (receipt) {
+
+        setLoadingMsg("Checking NFT creation");
 
         while (true) {
           const result: any = await contract?.methods.getAIResult(MODEL_ID, `*${query}*`).call({ from: accounts[0] });

@@ -120,6 +120,7 @@ contract ERC7007 is AIOracleCallbackReceiver, ERC721, ERC721URIStorage {
 
     function safeMint(
         address to,
+        string memory uri,
         uint[5] memory input, 
         Verifier.Proof memory proof
     ) external returns (uint256 tokenId) {
@@ -128,6 +129,7 @@ contract ERC7007 is AIOracleCallbackReceiver, ERC721, ERC721URIStorage {
 
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
+        _setTokenURI(tokenId, uri);
 
         return tokenId;
     }
