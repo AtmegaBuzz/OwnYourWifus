@@ -6,13 +6,13 @@ import "./AIOracleCallbackReceiver.sol";
 import "./verifier.sol";
 import "./IERC7007.sol";
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 
 // this contract is for ai.ora.io website
-contract ERC7007 is AIOracleCallbackReceiver, Initializable, ERC721Upgradeable, OwnableUpgradeable {
+contract ERC7007 is AIOracleCallbackReceiver, ERC721, ERC721URIStorage {
 
     event promptsUpdated(
         uint256 requestId,
@@ -37,6 +37,15 @@ contract ERC7007 is AIOracleCallbackReceiver, Initializable, ERC721Upgradeable, 
     }
 
 
+    address owner;
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner");
+        _;
+    }
+
+
+
     // requestId => AIOracleRequest
     mapping(uint256 => AIOracleRequest) public requests;
 
@@ -49,20 +58,16 @@ contract ERC7007 is AIOracleCallbackReceiver, Initializable, ERC721Upgradeable, 
 
     uint256 private _nextTokenId;
 
+    
+
 
     /// @notice Initialize the contract, binding it to a specified AIOracle.
-    constructor(IAIOracle _aiOracle) AIOracleCallbackReceiver(_aiOracle) {
+    constructor(IAIOracle _aiOracle) AIOracleCallbackReceiver(_aiOracle) ERC721("MyToken", "MTK") {
         callbackGasLimit[50] = 500_000; // SD 500k
         callbackGasLimit[11] = 5_000_000; // llama
         callbackGasLimit[9] = 5_000_000; // grok
 
         verifier = new Verifier();
-        _disableInitializers();
-    }
-    
-    function initialize(address initialOwner) initializer public {
-        __ERC721_init("Wifus", "WIFE");
-        __Ownable_init(initialOwner);
     }
 
 
@@ -116,6 +121,24 @@ contract ERC7007 is AIOracleCallbackReceiver, Initializable, ERC721Upgradeable, 
         _safeMint(to, tokenId);
 
         return tokenId;
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 
 

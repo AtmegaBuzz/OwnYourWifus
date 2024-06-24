@@ -9,7 +9,10 @@ import Web3 from "web3";
 import { useSearchParams } from "next/navigation";
 import { useAtom } from "jotai";
 import { contractAtom, loadingAtom, loadingMessage, web3Atom } from "@/atoms/global";
-
+import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
+import Image from "next/image";
+import Link from "next/link";
+import pinataSDK from '@pinata/sdk';
 
 const sleep = (ms: number) => {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -17,16 +20,153 @@ const sleep = (ms: number) => {
 
 const createNFT = () => {
 
-  const [query, setQuery] = useState("");
-  const [wifu, setWifu] = useState("");
-  const [state, setState] = useState("start");
+  const [query, setQuery] = useState("a black man");
+  const [wifu, setWifu] = useState("Qme9PptWmw9c4uuerPn2gBRaR7uHow97i5Xg1d47Vp5WHn");
+  const [state, setState] = useState("zkp"); // start zkp mint
+  const [proof, setProof] = useState<any>(null);
 
   const [contract,] = useAtom(contractAtom);
   const [web3,] = useAtom(web3Atom);
   const [loading, setLoading] = useAtom(loadingAtom);
   const [loadingMsg, setLoadingMsg] = useAtom(loadingMessage);
 
+  const api = process.env.NEXT_PUBLIC_PINATA_API_KEY as string;
+  const secret = process.env.NEXT_PUBLIC_PINATA_SECRET_API_KEY as string;
 
+
+
+  const uploadtoIpfs = async () => {
+
+    try {
+
+      const aigc_type = {
+
+        "title": "AIGC Metadata",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Wifu"
+          },
+          "description": {
+            "type": "string",
+            "description": "This Wifu is mine"
+          },
+          "image": {
+            "type": "string",
+            "description": `https://ipfs.io/ipfs/${wifu}`
+          },
+          "prompt": {
+            "type": "string",
+            "description": query
+          },
+          "aigc_type": {
+            "type": "string",
+            "description": "image"
+          },
+          "aigc_data": {
+            "type": "string",
+            "description": `https://ipfs.io/ipfs/${wifu}`
+          },
+          "proof_type": {
+            "type": "string",
+            "description": "validity (zkML)"
+          },
+          "proof": {
+            "type": "string",
+            "description": JSON.stringify(proof)
+          }
+        }
+      }
+
+      const res = await fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          pinata_api_key: api,
+          pinata_secret_api_key: secret,
+        },
+        body: JSON.stringify(aigc_type)
+      });
+
+      const result = res.json();
+      return result;
+
+    } catch (error) {
+      console.error('Error uploading JSON to IPFS:', error);
+      throw error;
+    }
+
+  }
+
+
+  const mint = async () => {
+
+    setLoadingMsg("Minting NFT with aigc_type")
+    setLoading(true);
+
+    const accounts = await web3?.eth.getAccounts()!;
+
+
+    const gasPrice = await web3?.eth.getGasPrice();
+
+    console.log(proof.inputs,proof.proof, "=====")
+    let tokenId = await contract?.methods.safeMint(
+      accounts[0],
+      proof.inputs,
+      proof.proof).send({
+        from: accounts[0],
+        gasPrice: gasPrice?.toString()
+    }).on("confirmation", ()=>{
+
+
+      console.log("tx done");
+
+    });
+
+    console.log(tokenId);
+    setLoading(false);
+
+  }
+
+  const generateZKP = async () => {
+
+    setLoadingMsg("Generating Claim Proof");
+    setLoading(true);
+
+    const accounts = await web3?.eth.getAccounts()!;
+    const MODEL_ID = process.env.NEXT_PUBLIC_MODEL_ID as string
+    const MODEL_ADDR = process.env.NEXT_PUBLIC_MODEL_ADDRESS as string
+
+
+    const body = {
+      owner: accounts[0],
+      prompt: query,
+      uri: wifu,
+      token_id: "1",
+      model_id: MODEL_ID,
+      model_addr: MODEL_ADDR
+    }
+
+    console.log(body)
+
+
+    let resp = await fetch("/api/generate-proof", {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    let proof = await resp.json();
+    console.log(proof);
+    setProof(proof);
+
+    setLoading(false);
+    setState("mint")
+
+  }
 
 
   const generateWifu = async () => {
@@ -52,6 +192,7 @@ const createNFT = () => {
         console.log(result);
         if (result !== "") {
           setWifu(result);
+          setState("zkp")
           break;
         }
         await sleep(2000);
@@ -82,9 +223,70 @@ const createNFT = () => {
 
   return (
     <div className="container mx-auto mt-4 ">
-      <div className="message-container bg-[#151518] border  rounded-sm bg-background  max-h-90 overflow-y-auto p-6">
-        <img src={`https://ipfs.io/ipfs/Qme9PptWmw9c4uuerPn2gBRaR7uHow97i5Xg1d47Vp5WHn`} alt="" />
-      </div>
+
+
+      {
+        state === "start" &&
+        (
+          <div className="w-full h-full flex justify-center items-center">
+            <p className="text-red-500 text-xl">Please Generate an NFT to view.</p>
+          </div>
+        )
+
+      }
+
+      {
+        (state === "zkp" || state === "mint") &&
+        (
+          <div className="">
+            <CardContainer className="inter-var w-[500px] h-[500px]">
+              <CardBody className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto sm:w-[30rem] h-auto rounded-xl p-6 border ">
+                <CardItem
+                  translateZ="50"
+                  className="text-xl font-bold text-neutral-600 dark:text-white"
+                >
+                  Great Choice!
+                </CardItem>
+                <CardItem
+                  as="p"
+                  translateZ="60"
+                  className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300"
+                >
+                  {query.slice(0, 30)}...
+                </CardItem>
+                <CardItem translateZ="100" className="w-full mt-4">
+                  <Image
+                    src={`https://ipfs.io/ipfs/${wifu}`}
+                    height="1000"
+                    width="1000"
+                    className="h-70 w-full object-cover rounded-xl group-hover/card:shadow-xl"
+                    alt="thumbnail"
+                    layout="intrinsic"
+
+                  />
+                </CardItem>
+                <div className="flex justify-between items-center mt-20">
+                  <CardItem
+                    translateZ={20}
+                    as={Link}
+                    href={`https://ipfs.io/ipfs/${wifu}`}
+                    target="__blank"
+                    className="px-4 py-2 rounded-xl font-normal dark:text-white text-md"
+                  >
+                    View
+                  </CardItem>
+
+                  <button onClick={state === "mint" ? mint : generateZKP} className="px-4 py-2 rounded-xl bg-black dark:bg-white dark:text-black text-white text-md font-bold">
+                    {state === "mint" ? "Mint Wifu" : "Generate ZKP"}
+                  </button>
+                </div>
+              </CardBody>
+            </CardContainer>
+          </div>
+        )
+      }
+
+
       <form
         className="fixed bottom-0 left-0 right-0 mb-[1rem] text-center p-4 overflow-hidden rounded-lg mx-auto w-[80%] border  focus-within:ring-1"
         onSubmit={(e) => {
