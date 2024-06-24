@@ -37,7 +37,8 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.1",
-    "web3": "^4.9.0"
+    "web3": "^4.9.0",
+    "zokrates-js": "^1.1.9"
   },
   "devDependencies": {
     "@types/node": "^20",
