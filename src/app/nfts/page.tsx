@@ -4,21 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { CornerDownLeft } from "lucide-react";
-import abi from "../../utils/DealClient.json";
-import Web3 from "web3";
-import { useSearchParams } from "next/navigation";
 import { useAtom } from "jotai";
 import { contractAtom, loadingAtom, loadingMessage, web3Atom } from "@/atoms/global";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import Image from "next/image";
 import Link from "next/link";
-import pinataSDK from '@pinata/sdk';
 
 const sleep = (ms: number) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const createNFT = () => {
+const CreateNFT: React.FC = () => {
 
   const [query, setQuery] = useState("Imagine a striking anime character exuding confidence and elegance. She possesses a thick, curvaceous figure with generous proportions, notably big breasts and a curvy abdomen. She is adorned in a sleek black gown that accentuates her silhouette, with intricate details that highlight her style and sophistication. Her pose exudes charisma, perhaps with one hand on her hip and a slight tilt of the head, showcasing her confidence and allure. The illustration should capture her gracefulness and charm, making her a captivating presence in any scene.");
   const [wifu, setWifu] = useState("");
@@ -318,4 +314,4 @@ const createNFT = () => {
   );
 };
 
-export default createNFT;
+export default CreateNFT;
