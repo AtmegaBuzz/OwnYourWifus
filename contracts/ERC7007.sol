@@ -109,6 +109,15 @@ contract ERC7007 is AIOracleCallbackReceiver, ERC721, ERC721URIStorage {
         emit promptRequest(requestId, msg.sender, modelId, prompt);
     }
 
+    function verifyToken(
+        uint[5] memory input, 
+        Verifier.Proof memory proof
+    ) public view returns (bool result) {
+        // Implement your minting logic here
+        require(verifier.verifyTx(proof, input), "Verification failed");
+        return true;
+    }
+
     function safeMint(
         address to,
         uint[5] memory input, 

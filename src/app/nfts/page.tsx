@@ -22,7 +22,7 @@ const createNFT = () => {
 
   const [query, setQuery] = useState("a black man");
   const [wifu, setWifu] = useState("Qme9PptWmw9c4uuerPn2gBRaR7uHow97i5Xg1d47Vp5WHn");
-  const [state, setState] = useState("zkp"); // start zkp mint
+  const [state, setState] = useState("start"); // start zkp mint
   const [proof, setProof] = useState<any>(null);
 
   const [contract,] = useAtom(contractAtom);
@@ -32,8 +32,6 @@ const createNFT = () => {
 
   const api = process.env.NEXT_PUBLIC_PINATA_API_KEY as string;
   const secret = process.env.NEXT_PUBLIC_PINATA_SECRET_API_KEY as string;
-
-
 
   const uploadtoIpfs = async () => {
 
@@ -89,8 +87,9 @@ const createNFT = () => {
         body: JSON.stringify(aigc_type)
       });
 
-      const result = res.json();
-      return result;
+      const result = await res.json();
+      console.log(result)
+      return result.IpfsHash;
 
     } catch (error) {
       console.error('Error uploading JSON to IPFS:', error);
@@ -105,6 +104,8 @@ const createNFT = () => {
     setLoadingMsg("Minting NFT with aigc_type")
     setLoading(true);
 
+    let ipfsHash = await uploadtoIpfs();
+
     const accounts = await web3?.eth.getAccounts()!;
 
 
@@ -113,6 +114,7 @@ const createNFT = () => {
     console.log(proof.inputs,proof.proof, "=====")
     let tokenId = await contract?.methods.safeMint(
       accounts[0],
+      `https://ipfs.io/ipfs/${ipfsHash}`,
       proof.inputs,
       proof.proof).send({
         from: accounts[0],
@@ -187,30 +189,29 @@ const createNFT = () => {
       const gasPrice = await web3?.eth.getGasPrice();
 
       setLoadingMsg("Checking NFT creation");
-      while (true) {
-        const result: any = await contract?.methods.getAIResult(MODEL_ID, `*${query}*`).call({ from: accounts[0] });
-        console.log(result);
-        if (result !== "") {
-          setWifu(result);
-          setState("zkp")
-          break;
+
+
+      contract?.methods.calculateAIResult(MODEL_ID, `*${query}*`).send({
+        from: accounts[0],
+        value: estimated_fees?.toString(),
+        gasPrice: gasPrice?.toString()
+      }).on('confirmation', async function (receipt) {
+
+        while (true) {
+          const result: any = await contract?.methods.getAIResult(MODEL_ID, `*${query}*`).call({ from: accounts[0] });
+          console.log(result);
+          if (result !== "") {
+            setWifu(result);
+            setState("zkp")
+            break;
+          }
+          await sleep(2000);
         }
-        await sleep(2000);
-      }
-
-      setLoading(false);
-
-      // contract?.methods.calculateAIResult(MODEL_ID, `*${query}*`).send({
-      //   from: accounts[0],
-      //   value: estimated_fees?.toString(),
-      //   gasPrice: gasPrice?.toString()
-      // }).on('confirmation', async function (receipt) {
-
-
-      //   setLoading(false);
-      // }).on("error", ()=>{
-      //   setLoading(false);
-      // })
+  
+        setLoading(false);
+      }).on("error", ()=>{
+        setLoading(false);
+      })
     }
 
     catch (e: any) {
