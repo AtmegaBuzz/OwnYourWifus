@@ -3,41 +3,46 @@ import { ethers } from 'ethers';
 import { Button } from "@/components/ui/button"
 
 import React from 'react'
-import{useState } from "react"
+import { useState } from "react"
+import { useAtom } from 'jotai';
+import { contractAtom, web3Atom } from '@/atoms/global';
+import Web3 from 'web3';
+import { ABI } from '@/abi';
 
 
 
 
 const Connect = () => {
-    const [connected, setConnected] = useState(false);
-    const [walletAddress, setWalletAddress] = useState("");
-    console.log(walletAddress)
+  const [walletAddress, setWalletAddress] = useState("");
+  const [web3, setWeb3] = useAtom(web3Atom);
+  const [_, setContract] = useAtom(contractAtom);
+
+  
+  const connectWallet = async function connectWallet() {
     
-     const connectWallet = async function connectWallet() {
-    
-    if (!connected) {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const _walletAddress = await signer.getAddress();
-      setConnected(true);
-      setWalletAddress(_walletAddress);
-    } else {
-      // Disconnect the wallet
-      window.ethereum.selectedAddress = null;
-      setConnected(false);
-      setWalletAddress("");
+    if (web3 === null) {
+      const web3 = new Web3(window.ethereum);
+      const contractl = new web3.eth.Contract(ABI, process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as string);
+
+      
+      const accounts = await web3?.eth.getAccounts();
+      
+      console.log(accounts[0])
+      setWalletAddress(accounts[0]);
+      setContract(contractl);
+      setWeb3(web3);
     }
-     }
-    
+  }
+
   return (
     <div>
-       <div>
-      {!walletAddress ? (
-        <Button type="button" className='rounded-full' onClick={connectWallet}>Wallet</Button>
-      ) : (
-        <Button type="button" className='rounded-full'>Connected</Button>
-      )}
-    </div>
+      <div>
+        {!walletAddress ? (
+          <Button type="button" className='rounded-full' onClick={connectWallet}>Connect Wallet</Button>
+        ) : (
+          <Button type="button" className='rounded-full'>Connected</Button>
+        )}
+      </div>
     </div>
   )
 }

@@ -40,3 +40,5 @@ out
 *.r1cs
 *.key
 *.wtns
+
+.env
