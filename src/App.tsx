@@ -1,22 +1,22 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import Web3, { Contract, ContractAbi } from 'web3';
-import {ABI} from "./abi";
+import { ABI } from "./abi";
 
 function App() {
 
-  const contractAddress = '0x114DA3723Bcdfdd8023cE61402505969cf7DEc4d';
+  const contractAddress = '0x912AA99d9bE49AE6e88f5793758076a35278d3d4';
+  const MODEL_ID = "50";
 
-  
   const [web3, setWeb3] = useState<Web3 | null>(null);
   const [contract, setContract] = useState<Contract<ContractAbi> | null>(null);
 
-  
+
 
   const connectMetaMask = async () => {
 
     if (window.ethereum) {
-      await window.ethereum.request({method: "eth_requestAccounts"});
+      await window.ethereum.request({ method: "eth_requestAccounts" });
       const web3l = new Web3(window.ethereum);
 
       const contractl = new web3l.eth.Contract(ABI, contractAddress);
@@ -42,20 +42,20 @@ function App() {
       model_addr: "0x375C11FD30FdC95e10aAD66bdcE590E1bccc6aFA"
     }
 
-    const resp = await fetch(
-      "http://localhost:3000/api/generate-proof/",
-      {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-    )
+    // const resp = await fetch(
+    //   "http://localhost:3000/api/generate-proof/",
+    //   {
+    //     method: "POST",
+    //     body: JSON.stringify(body),
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     }
+    //   }
+    // )
 
-    const proof = await resp.json()
+    // const proof = await resp.json()
 
-    console.log(proof)
+    // console.log(proof)
 
 
     const accounts = await web3?.eth.getAccounts();
@@ -64,16 +64,31 @@ function App() {
       return;
     }
 
-    const result = await contract?.methods.verifyTx(proof.proof,proof.inputs).call({from: accounts[0]});
+    // const result = await contract?.methods.verifyTx(proof.proof,proof.inputs).call({from: accounts[0]});
 
+    // AI workflow
+    const estimated_fees = await contract?.methods.estimateFee(MODEL_ID).call({ from: accounts[0] })
+    const gasPrice = await web3?.eth.getGasPrice();
+
+    console.log(estimated_fees)
+
+    // contract?.methods.calculateAIResult("50", "*A green car*").send({
+    //   from: accounts[0],
+    //   value: estimated_fees?.toString(),
+    //   gasPrice: gasPrice?.toString()
+    // }).on('confirmation', async function (receipt) {
+
+    // })
+    
+    const result = await contract?.methods.getAIResult("50", "*A green car*").call({from: accounts[0]});
     console.log(result);
 
   }
-  
 
-  useEffect(()=>{
+
+  useEffect(() => {
     connectMetaMask();
-  },[])
+  }, [])
 
   return (
     <>
