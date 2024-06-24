@@ -1,4 +1,4 @@
-# About OwnYourWifus
+# About OwnYourWifus using ORA Stable Diffusion
 
 OwnYourWifus introduces a groundbreaking NFT marketplace adhering to the ERC7007 token standard, dedicated to creating and trading unique Wifus NFTs. Leveraging cutting-edge technology, our platform integrates the ORA Stable diffusion oracle for stable and reliable AI-generated content. This ensures that each Wifus NFT is not only visually captivating but also backed by robust technical infrastructure.
 
