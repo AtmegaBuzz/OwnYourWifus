@@ -17,8 +17,8 @@ const sleep = (ms: number) => {
 const CreateNFT: React.FC = () => {
 
   const [query, setQuery] = useState("Imagine a striking anime character exuding confidence and elegance. She possesses a thick, curvaceous figure with generous proportions, notably big breasts and a curvy abdomen. She is adorned in a sleek black gown that accentuates her silhouette, with intricate details that highlight her style and sophistication. Her pose exudes charisma, perhaps with one hand on her hip and a slight tilt of the head, showcasing her confidence and allure. The illustration should capture her gracefulness and charm, making her a captivating presence in any scene.");
-  const [wifu, setWifu] = useState("QmS85SZKHMgejqYRk6ieU4RT9S57ijMgVDyhyqUwuJ7qw2");
-  const [state, setState] = useState("zkp"); // start zkp mint
+  const [wifu, setWifu] = useState("");
+  const [state, setState] = useState("start"); // start zkp mint
   const [proof, setProof] = useState<any>(null);
 
   const [contract,] = useAtom(contractAtom);
